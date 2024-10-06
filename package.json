@@ -3,7 +3,7 @@
   "version": "1.5.2",
   "description": "Helper library to download assets (ajax) directly or through a proxy",
   "main": "lib/index.js",
-  "types": "lib/http-request.d.ts",
+  "types": "obsidian-http-request.d.ts",
   "scripts": {
     "lint": "eslint . --config eslint.config.js",
     "test": "NODE_ENV=test mocha --require jsdom-global/register test/**/*.test.js"

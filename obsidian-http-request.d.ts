@@ -2,7 +2,7 @@ declare module 'obsidian-http-request' {
   interface HttpRequestOptions {
     method?: string;
     headers?: Record<string, string>;
-    body?: Buffer | string | null;
+    body?: Buffer | null;
     allowedMimes?: string[];
   }
 
@@ -22,17 +22,17 @@ declare module 'obsidian-http-request' {
   interface HttpRequest {
     proxyPath: string;
 
-    getRaw(url: string): Promise<Buffer>;
-    getRaw(url: string, callback: (error: HttpRequestError | null, result: Buffer) => void): void;
+    getRaw(url: string, options?: HttpRequestOptions): Promise<Buffer>;
+    getRaw(url: string, options: HttpRequestOptions, callback: (error: HttpRequestError | null, result: Buffer) => void): void;
 
-    getBlob(url: string): Promise<Blob>;
-    getBlob(url: string, callback: (error: HttpRequestError | null, result: Blob) => void): void;
+    getBlob(url: string, options?: HttpRequestOptions): Promise<Blob>;
+    getBlob(url: string, options: HttpRequestOptions, callback: (error: HttpRequestError | null, result: Blob) => void): void;
 
-    getText(url: string): Promise<string>;
-    getText(url: string, callback: (error: HttpRequestError | null, result: string) => void): void;
+    getText(url: string, options?: HttpRequestOptions): Promise<string>;
+    getText(url: string, options: HttpRequestOptions, callback: (error: HttpRequestError | null, result: string) => void): void;
 
-    getJson<T = any>(url: string): Promise<T>;
-    getJson<T = any>(url: string, callback: (error: HttpRequestError | null, result: T) => void): void;
+    getJson<T = any>(url: string, options?: HttpRequestOptions): Promise<T>;
+    getJson<T = any>(url: string, options: HttpRequestOptions, callback: (error: HttpRequestError | null, result: T) => void): void;
 
     request(url: string, options?: HttpRequestOptions): Promise<Buffer>;
     request(url: string, options: HttpRequestOptions, callback: (error: HttpRequestError | null, result: Buffer) => void): void;
