@@ -46,31 +46,34 @@ httpRequest.getText("http://example.com/hello.txt")
 
 ### Questions
 
-If you have any question, you can:
+如果您有任何问题,您可以:
 
-* [Open an issue on GitHub][gh-issue]
-* [Ask on discord][discord]
+* [在 GitHub 上开一个 issue][gh-issue]
+* [在 Discord 上询问][discord]
 
 ### Bugs
 
-If you found a bug, please [open an issue on Github][gh-issue] with as much information as possible.
+如果您发现了 bug,请[在 Github 上开一个 issue][gh-issue],并提供尽可能多的信息。
 
 ### Pull Requests
 
-Please consider [filing a bug][gh-issue] before starting to work on a new feature. This will allow us to discuss the best way to do it. This is of course not necessary if you just want to fix some typo or small errors in the code.
+在开始开发新功能之前,请考虑先[提交一个 bug][gh-issue]。这将允许我们讨论最佳的实现方式。当然,如果您只是想修复一些拼写错误或代码中的小错误,这就不是必要的了。
 
-### Coding Style / Lint
+### 代码风格 / Lint
 
-To check coding style, run the follwoing command:
+要检查代码风格,运行以下命令:
 
-    npx grunt jshint
+    pnpm lint
 
-### Tests
+如果您是项目贡献者,请确保在提交代码之前运行此命令并修复任何 lint 错误。
 
-Tu run tests, use the following command:
+注意: 我们使用 ESLint 的扁平配置系统。如果您需要修改 lint 规则,请编辑 `eslint.config.js` 文件。
 
-    npx grunt test
+### 测试
 
+要运行测试,使用以下命令:
+
+    npm test
 
 [gh-issue]: https://github.com/wanadev/obsidian-http-request/issues
 [discord]: https://discord.gg/BmUkEdMuFp
@@ -78,14 +81,16 @@ Tu run tests, use the following command:
 
 ## Changelog
 
-* **[NEXT]** (changes on master that have not been released yet):
+* **[NEXT]** (master 分支上尚未发布的更改):
 
-  * Nothing yet ;)
+  * 移除了 `q` 依赖,重构为使用原生 Promises
+  * 更新了所有相关代码和测试以使用原生 Promises
+  * 移除了 Grunt,使用更简单的方式进行测试和代码检查
 
 * **v1.5.2:**
 
-  * Replaced deprecated mocha-phantomjs by mocha-headless-chrome to run tests (@jbghoul, 27)
-  * Fix: added missing lodash dependency (@jbghoul, #28)
+  * 用 mocha-headless-chrome 替换了已弃用的 mocha-phantomjs 来运行测试 (@jbghoul, 27)
+  * 修复: 添加了缺失的 lodash 依赖 (@jbghoul, #28)
 
 * **v1.5.1:**
 

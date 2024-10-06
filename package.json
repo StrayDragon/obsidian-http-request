@@ -3,13 +3,14 @@
   "version": "1.5.2",
   "description": "Helper library to download assets (ajax) directly or through a proxy",
   "main": "lib/index.js",
+  "types": "lib/http-request.d.ts",
   "scripts": {
-    "test": "grunt test",
-    "lint": "grunt lint"
+    "lint": "eslint . --config eslint.config.js",
+    "test": "NODE_ENV=test mocha --require jsdom-global/register test/**/*.test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wanadev/obsidian-http-request.git"
+    "url": "git+https://github.com/straydragon/obsidian-http-request.git"
   },
   "keywords": [
     "obsidian",
@@ -20,24 +21,18 @@
   "author": "Wanadev <http://www.wanadev.fr/>",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/wanadev/obsidian-http-request/issues"
+    "url": "https://github.com/straydragon/obsidian-http-request/issues"
   },
-  "homepage": "https://github.com/wanadev/obsidian-http-request#readme",
+  "homepage": "https://github.com/straydragon/obsidian-http-request#readme",
   "devDependencies": {
-    "body-parser": "^1.20.2",
-    "enlightme": "^0.2.0",
-    "expect.js": "^0.3.1",
-    "express": "^4.18.2",
-    "grunt": "^1.6.1",
-    "grunt-browserify": "^6.0.0",
-    "grunt-contrib-jshint": "^3.2.0",
-    "grunt-shell": "^4.0.0",
+    "eslint": "^8.57.1",
+    "chai": "^4.3.7",
+    "jsdom": "^21.1.0",
+    "jsdom-global": "^3.0.2",
     "mocha": "^10.2.0",
-    "mocha-headless-chrome": "^4.0.0",
-    "pm2": "^5.3.0"
+    "nock": "^13.2.4"
   },
   "dependencies": {
-    "q": "^1.5.1",
     "lodash": "^4.17.21"
   },
   "enlightme": {

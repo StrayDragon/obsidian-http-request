@@ -5,12 +5,11 @@ var http = require("http");
 var https = require("https");
 var lodash = require("lodash");
 
-var Q = require("q");
-
-var DEFAULT_OPTIONS = {
-    maxContentLength: 5 * 1024 * 1024,  // 5 MiB
+// 定义 DEFAULT_OPTIONS
+const DEFAULT_OPTIONS = {
+    allowedMethods: ["GET", "POST", "HEAD"],
     allowedPorts: [80, 443],
-    allowedMethods: ["GET"]
+    maxContentLength: 10 * 1024 * 1024  // 10MB
 };
 
 module.exports = function(params) {
@@ -88,75 +87,75 @@ module.exports = function(params) {
             headers: httpHeaders
         };
 
-        Q.Promise(function(resolve, reject) {
-                var httpModule = (httpOptions.protocol == "https:") ? https : http;
-                var request = httpModule.request(httpOptions, resolve)
-                    .on("error", reject);
+        return new Promise(function(resolve, reject) {
+            var httpModule = (httpOptions.protocol == "https:") ? https : http;
+            var request = httpModule.request(httpOptions, resolve)
+                .on("error", reject);
 
-                if (proxyOptions.body) {
-                    var body = new Buffer.from(proxyOptions.body, "base64");
-                    request.write(body);
-                }
+            if (proxyOptions.body) {
+                var body = new Buffer.from(proxyOptions.body, "base64");
+                request.write(body);
+            }
 
-                request.end();
-            })
-            .then(function(response) {
-                var error;
-                if (response.statusCode < 200 || response.statusCode > 299) {
-                    error = new Error("HttpStatus" + response.statusCode);
-                    error.statusCode = 404;
+            request.end();
+        })
+        .then(function(response) {
+            var error;
+            if (response.statusCode < 200 || response.statusCode > 299) {
+                error = new Error("HttpStatus" + response.statusCode);
+                error.statusCode = 404;
+                throw error;
+            }
+            if (proxyOptions.allowedMimes.length > 0) {
+                if (!response.headers["content-type"]) {
+                    error = new Error("MimeNotAllowed");
+                    error.statusCode = 406;
                     throw error;
                 }
-                if (proxyOptions.allowedMimes.length > 0) {
-                    if (!response.headers["content-type"]) {
-                        error = new Error("MimeNotAllowed");
-                        error.statusCode = 406;
-                        throw error;
-                    }
-                    var mime = response.headers["content-type"].split(";")[0].toLowerCase();
-                    if (proxyOptions.allowedMimes.indexOf(mime) < 0) {
-                        error = new Error("MimeNotAllowed");
-                        error.statusCode = 406;
-                        throw error;
-                    }
+                var mime = response.headers["content-type"].split(";")[0].toLowerCase();
+                if (proxyOptions.allowedMimes.indexOf(mime) < 0) {
+                    error = new Error("MimeNotAllowed");
+                    error.statusCode = 406;
+                    throw error;
                 }
-                if (response.headers["content-length"]) {
-                    var contentLength = Number(response.headers["content-length"]);
-                    if (contentLength > options.maxContentLength) {
-                        error = new Error("ContentTooLarge");
-                        error.statusCode = 413;
-                        throw error;
-                    }
+            }
+            if (response.headers["content-length"]) {
+                var contentLength = Number(response.headers["content-length"]);
+                if (contentLength > options.maxContentLength) {
+                    error = new Error("ContentTooLarge");
+                    error.statusCode = 413;
+                    throw error;
                 }
-                return response;
-            })
-            .then(function(response) {
-                var contentLength = 0;
+            }
+            return response;
+        })
+        .then(function(response) {
+            var contentLength = 0;
 
-                res.set("Content-Type", response.headers["content-type"] || "application/octet-stream");
-                if (response.headers["content-length"]) {
-                    res.set("Content-Length", response.headers["content-length"]);
-                }
+            res.set("Content-Type", response.headers["content-type"] || "application/octet-stream");
+            if (response.headers["content-length"]) {
+                res.set("Content-Length", response.headers["content-length"]);
+            }
 
-                response.on("data", function(chunk) {
-                    res.write(chunk);
-                    contentLength += chunk.length;
-                    if (contentLength > options.maxContentLength) {
-                        response.destroy();
-                        res.end();
-                        next();
-                    }
-                });
-
-                response.on("end", function() {
+            response.on("data", function(chunk) {
+                res.write(chunk);
+                contentLength += chunk.length;
+                if (contentLength > options.maxContentLength) {
+                    response.destroy();
                     res.end();
                     next();
-                });
-            })
-            .catch(function(error) {
-                res.sendStatus(error.statusCode || 500);
+                }
+            });
+
+            response.on("end", function() {
+                res.end();
                 next();
             });
+        })
+        .catch(function(error) {
+            res.sendStatus(error.statusCode || 500);
+            next();
+        });
     }
 
     return proxyMiddleware;
