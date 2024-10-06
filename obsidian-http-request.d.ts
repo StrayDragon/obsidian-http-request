@@ -2,7 +2,7 @@ declare module 'obsidian-http-request' {
   interface HttpRequestOptions {
     method?: string;
     headers?: Record<string, string>;
-    body?: Buffer | null;
+    body?: Buffer | string | null;
     allowedMimes?: string[];
   }
 

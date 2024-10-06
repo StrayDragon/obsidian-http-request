@@ -6,7 +6,7 @@
   "types": "obsidian-http-request.d.ts",
   "scripts": {
     "lint": "eslint . --config eslint.config.js",
-    "test": "NODE_ENV=test mocha --require jsdom-global/register test/**/*.test.js"
+    "test": "NODE_ENV=obsidian-http-request-test mocha --require jsdom-global/register test/**/*.test.js"
   },
   "repository": {
     "type": "git",

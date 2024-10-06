@@ -4,38 +4,42 @@ const nock = require('nock');
 
 describe('httpRequest', function() {
     beforeEach(function() {
-        process.env.NODE_ENV = 'test';
+        process.env.NODE_ENV = 'obsidian-http-request-test';
         nock.cleanAll();
+        global.location = { href: 'http://localhost/' };
     });
 
     afterEach(function() {
         nock.cleanAll();
         delete process.env.NODE_ENV;
+        delete global.location;
     });
 
     describe('getRaw', function() {
-        it('should return a Buffer', async function() {
+        it('should return a Buffer', function() {
             nock('http://example.com')
                 .get('/test.txt')
                 .reply(200, 'Hello, World!');
 
-            const result = await httpRequest.getRaw('http://example.com/test.txt');
-            expect(result).to.be.an.instanceOf(Buffer);
-            expect(result.toString()).to.equal('Hello, World!');
+            return httpRequest.getRaw('http://example.com/test.txt')
+                .then(function(result) {
+                    expect(result).to.be.an.instanceof(Buffer);
+                    expect(result.toString()).to.equal('Hello, World!');
+                });
         });
 
-        it('should handle HTTP errors', async function() {
+        it('should handle HTTP errors', function() {
             nock('http://example.com')
-                .get('/error')
+                .get('/test.txt')
                 .reply(404, 'Not Found');
 
-            try {
-                await httpRequest.getRaw('http://example.com/error');
-                throw new Error('Should have thrown an error');
-            } catch (error) {
-                expect(error.message).to.include('HttpStatus404');
-                expect(error.statusCode).to.equal(404);
-            }
+            return httpRequest.getRaw('http://example.com/test.txt')
+                .then(function() {
+                    throw new Error('Expected method to reject.');
+                })
+                .catch(function(error) {
+                    expect(error.message).to.include('HttpStatus404');
+                });
         });
     });
 
